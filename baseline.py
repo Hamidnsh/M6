@@ -17,8 +17,9 @@ sampler = TPESampler(seed=0)
 
 starting_date = "2015-01-01"
 future_starting_date = pd.to_datetime("2022-03-06")
-future_end_date = pd.to_datetime("2022-04-05")
-test_size = 3  # in months
+future_end_date = pd.to_datetime("2022-04-01")
+forcast_horizon_days = (future_end_date - future_starting_date).days + 1
+
 
 
 df_history = pd.read_csv('full_asset_m6_history.csv')
@@ -29,8 +30,8 @@ df_future['date'] = pd.to_datetime(df_future['date'])
 df_history['symbol'] = df_history['symbol'] .astype('category')
 df_future['symbol'] = df_future['symbol'] .astype('category')
 
-df_train = df_history.loc[df_history['date'] <= future_starting_date - pd.DateOffset(months=test_size)].copy() 
-df_test = df_history.loc[df_history['date'] > future_starting_date - pd.DateOffset(months=test_size)].copy()
+df_train = df_history.loc[df_history['date'] <= future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy() 
+df_test = df_history.loc[df_history['date'] > future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy()
 
 X_cols = ['symbol', 'dayofyear', 'week', 'month', 'year', 'quarter', 'shift_close', 'shift_high', 'shift_low', 'shift_open', 'shift_volume']
 y_col = 'price'

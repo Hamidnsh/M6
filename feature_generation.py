@@ -9,9 +9,9 @@ import numpy as np
 
 starting_date = "2015-01-01"
 future_starting_date = pd.to_datetime("2022-03-06")
-future_end_date = pd.to_datetime("2022-04-05")
+future_end_date = pd.to_datetime("2022-04-01")
 forcast_horizon_days = (future_end_date - future_starting_date).days + 1
-fold_val_size = -3*forcast_horizon_days
+
 target = 'price'
 
 df = pd.read_csv('full_asset_m6.csv')

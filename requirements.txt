@@ -1,0 +1,8 @@
+lightgbm
+numpy
+pandas
+scikit-learn
+yfinance
+optuna
+seaborn
+matplotlib

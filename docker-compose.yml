@@ -1,0 +1,7 @@
+services:
+  shell:
+    build: .
+    volumes:
+      - .:/src
+    working_dir: /src
+    entrypoint: bash

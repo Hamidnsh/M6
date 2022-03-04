@@ -10,7 +10,7 @@ import numpy as np
 starting_date = "2015-01-01"
 future_starting_date = pd.to_datetime("2022-03-06")
 future_end_date = pd.to_datetime("2022-04-01")
-forcast_horizon_days = (future_end_date - future_starting_date).days + 1
+forcast_horizon_days = 20 # excluding weekends
 
 target = 'price'
 
@@ -19,6 +19,7 @@ df['date'] = pd.to_datetime(df['date'])
 
 def generate_features(df, date_col, key_col, roll_cols, shift_size=forcast_horizon_days):
     df['dayofyear'] = df[date_col].dt.dayofyear
+    df['dayofweek'] = df[date_col].dt.dayofweek
     df['week'] = df[date_col].dt.week
     df['month'] = df[date_col].dt.month
     df['year'] = df[date_col].dt.year

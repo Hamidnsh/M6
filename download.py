@@ -27,9 +27,15 @@ df_future = data.iloc[0:len(forecast_horizon)]
 df_future.index = forecast_horizon
 df_future.index.name = 'Date'
 df_future = df_future.applymap(lambda x: np.nan)
+df_future['date'] = df_future.index.values
+df_future['dayofweek']  = df_future['date'].dt.dayofweek
+df_future = df_future.loc[df_future['dayofweek'] <= 4].copy()
+del df_future['date']
+del df_future['dayofweek'] 
+print(len(df_future))
 
 
-data = data.stack().reset_index()
+data = data.stack(dropna=False).reset_index()
 data.rename(columns={"Date": "date",
                      "level_1":"symbol",
                      "Adj Close": "price",

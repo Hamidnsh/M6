@@ -18,7 +18,7 @@ sampler = TPESampler(seed=0)
 starting_date = "2015-01-01"
 future_starting_date = pd.to_datetime("2022-03-06")
 future_end_date = pd.to_datetime("2022-04-01")
-forcast_horizon_days = (future_end_date - future_starting_date).days + 1
+forcast_horizon_days = 20
 
 
 
@@ -30,10 +30,11 @@ df_future['date'] = pd.to_datetime(df_future['date'])
 df_history['symbol'] = df_history['symbol'] .astype('category')
 df_future['symbol'] = df_future['symbol'] .astype('category')
 
+# split history into train and test
 df_train = df_history.loc[df_history['date'] <= future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy() 
 df_test = df_history.loc[df_history['date'] > future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy()
 
-X_cols = ['symbol', 'dayofyear', 'week', 'month', 'year', 'quarter', 'shift_close', 'shift_high', 'shift_low', 'shift_open', 'shift_volume']
+X_cols = ['symbol', 'dayofyear', 'dayofweek', 'week', 'month', 'year', 'quarter', 'shift_close', 'shift_high', 'shift_low', 'shift_open', 'shift_volume']
 y_col = 'price'
 
 def train_model(df_train, k=3, n_trails=20, es=20):
@@ -101,12 +102,12 @@ for i in range(len(models)):
     
 truth = df_test[y_col].values
 
-bias_val = np.divide(np.sum(truth), np.sum(pred)) - 1
+bias_val = np.divide(np.nansum(truth), np.nansum(pred)) - 1
 print("bias: " + str(bias_val))
 
 
-errors = np.sum(np.abs(pred - truth))
-wmape = errors / np.sum(truth)
+errors = np.nansum(np.abs(pred - truth))
+wmape = errors / np.nansum(truth)
 print("wmape: " + str(wmape))
 
 Accuracy = (1 - wmape)*100

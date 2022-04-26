@@ -8,8 +8,8 @@ import pandas as pd
 import numpy as np
 
 starting_date = "2015-01-01"
-future_starting_date = pd.to_datetime("2022-03-06")
-future_end_date = pd.to_datetime("2022-04-01")
+future_starting_date = pd.to_datetime("2022-05-02")
+future_end_date = pd.to_datetime("2022-05-27")
 forcast_horizon_days = 20 # excluding weekends
 
 target = 'price'
@@ -29,7 +29,7 @@ def generate_features(df, date_col, key_col, roll_cols, shift_size=forcast_horiz
     
     return df 
 
-df = generate_features(df, date_col='date', key_col='symbol', roll_cols=['close','high','low','open','volume'])
+df = generate_features(df, date_col='date', key_col='symbol', roll_cols=['high','low','open','volume']) #exclude close 
 
 df_history = df.loc[df.date < future_starting_date ].copy()
 df_future = df.loc[df.date >= future_starting_date ].copy()

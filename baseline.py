@@ -16,8 +16,8 @@ np.random.seed(0)
 sampler = TPESampler(seed=0)
 
 starting_date = "2015-01-01"
-future_starting_date = pd.to_datetime("2022-03-06")
-future_end_date = pd.to_datetime("2022-04-01")
+future_starting_date = pd.to_datetime("2022-05-02")
+future_end_date = pd.to_datetime("2022-05-27")
 forcast_horizon_days = 20
 
 
@@ -27,27 +27,28 @@ df_history['date'] = pd.to_datetime(df_history['date'])
 df_future = pd.read_csv('full_asset_m6_future.csv')
 df_future['date'] = pd.to_datetime(df_future['date'])
 
-df_history['symbol'] = df_history['symbol'] .astype('category')
-df_future['symbol'] = df_future['symbol'] .astype('category')
+df_history['symbol'] = pd.Categorical(df_history['symbol'])
+categories = df_history['symbol'].cat.categories
+df_future['symbol'] = pd.Categorical(df_future['symbol'], categories=categories)
 
 # split history into train and test
 df_train = df_history.loc[df_history['date'] <= future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy() 
 df_test = df_history.loc[df_history['date'] > future_starting_date - pd.DateOffset(days=forcast_horizon_days)].copy()
 
-X_cols = ['symbol', 'dayofyear', 'dayofweek', 'week', 'month', 'year', 'quarter', 'shift_close', 'shift_high', 'shift_low', 'shift_open', 'shift_volume']
+X_cols = ['symbol', 'dayofyear', 'dayofweek', 'week', 'month', 'year', 'quarter', 'shift_high', 'shift_low', 'shift_open', 'shift_volume'] #'shift_close' is removed
 y_col = 'price'
 
-def train_model(df_train, k=3, n_trails=20, es=20):
+def train_model(df_train, k=3, n_trails=50, es=20):
     studies = []
     
     def LGBM_objective(trial):
         param = {
             'boosting_type':trial.suggest_categorical('boosting_type', ['gbdt', 'dart']),
-            'n_estimators': trial.suggest_int('n_estimators', 50, 200),
+            'n_estimators': trial.suggest_int('n_estimators', 50, 250),
             'lambda_l1': trial.suggest_loguniform('lambda_l1', 1e-5, 10.0),
             'lambda_l2': trial.suggest_loguniform('lambda_l2', 1e-5, 10.0),
             'learning_rate': trial.suggest_float('learning_rate', 1e-10, 0.3),
-            'num_leaves': trial.suggest_int('num_leaves', 4, 32), 
+            'num_leaves': trial.suggest_int('num_leaves', 4, 64), 
             'feature_fraction': trial.suggest_uniform('feature_fraction', 0.5, 1.0),
             'min_child_samples': 10,
         }

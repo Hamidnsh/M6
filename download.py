@@ -17,8 +17,8 @@ assets = [
 
 #Download historical data (select starting date)
 starting_date = "2015-01-01"
-future_starting_date = pd.to_datetime("2022-03-06")
-future_end_date = pd.to_datetime("2022-04-01")
+future_starting_date = pd.to_datetime("2022-05-02")
+future_end_date = pd.to_datetime("2022-05-27")
 
 data = yf.download(assets, start=starting_date)
 
